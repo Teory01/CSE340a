@@ -21,6 +21,12 @@ router.get("/login", utilities.handleErrors(accountController.buildLogin))
  *  ******************************** */
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
+/* ************************************
+ *  Deliver Account Management View
+ *  Unit 5, deliver account management view activity
+ *  ******************************** */
+router.get("/", utilities.checkLogin, utilities.handleErrors(accountController.buildAccountManagement))
+
 
 router.post(
   "/register",
