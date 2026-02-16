@@ -49,4 +49,29 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
+/* ************************************
+ *  Management view and logout process
+ *  Unit 5, deliver account management view activity
+ *  ******************************** */
+// Build account management view
+router.get(
+  "/",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildManagement)
+)
+
+// Build update account view
+router.get(
+  "/updateAccount/:id",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildUpdate)
+)
+
+
+// Process logout
+router.get(
+  "/logout",
+  utilities.handleErrors(accountController.accountLogout)
+)
+
 module.exports = router
