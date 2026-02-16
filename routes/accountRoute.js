@@ -22,12 +22,9 @@ router.get("/login", utilities.handleErrors(accountController.buildLogin))
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
 /* ************************************
- *  Deliver Account Management View
- *  Unit 5, deliver account management view activity
+ *  Process Registration
+ *  Unit 4, process registration activity
  *  ******************************** */
-router.get("/", utilities.checkLogin, utilities.handleErrors(accountController.buildAccountManagement))
-
-
 router.post(
   "/register",
   regValidate.registationRules(),
@@ -35,13 +32,11 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-
 /* ************************************
  *  Process Login
  *  Unit 4, stickiness activity
  *  Modified in Unit 5, Login Process activity
  *  ******************************** */
-
 router.post(
   "/login",
   regValidate.loginRules(),
@@ -49,29 +44,5 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
-/* ************************************
- *  Management view and logout process
- *  Unit 5, deliver account management view activity
- *  ******************************** */
-// Build account management view
-router.get(
-  "/",
-  utilities.checkLogin,
-  utilities.handleErrors(accountController.buildManagement)
-)
-
-// Build update account view
-router.get(
-  "/updateAccount/:id",
-  utilities.checkLogin,
-  utilities.handleErrors(accountController.buildUpdate)
-)
-
-
-// Process logout
-router.get(
-  "/logout",
-  utilities.handleErrors(accountController.accountLogout)
-)
 
 module.exports = router
