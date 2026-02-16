@@ -94,4 +94,116 @@ async function addInventory(
   }
 }
 
-module.exports = { getClassifications, getInventoryByClassificationId, getInventoryById, addClassification, addInventory }
+
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+async function updateInventory(
+  inv_id,
+  inv_make,
+  inv_model,
+  inv_description,
+  inv_image,
+  inv_thumbnail,
+  inv_price,
+  inv_year,
+  inv_miles,
+  inv_color,
+  classification_id
+) {
+  try {
+    const sql =
+      "UPDATE public.inventory SET inv_make = $1, inv_model = $2, inv_description = $3, inv_image = $4, inv_thumbnail = $5, inv_price = $6, inv_year = $7, inv_miles = $8, inv_color = $9, classification_id = $10 WHERE inv_id = $11 RETURNING *"
+    const data = await pool.query(sql, [
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+      inv_id
+    ])
+    return data.rows[0]
+  } catch (error) {
+    console.error("Update error: " + error)
+  }
+}
+
+
+async function addInventoryToWishlist(account_id, inv_id) {
+  try {
+    const sql =
+      "INSERT INTO wishlist (account_id, inv_id) VALUES ($1, $2) RETURNING *"
+    const data = await pool.query(sql, [account_id, inv_id])
+    return data.rows[0]
+  } catch (error) {
+    console.error("Add to wishlist error: " + error)
+  }
+}
+
+
+async function checkExistingInventory(inv_id) {
+  try {
+    const sql = "SELECT * FROM inventory WHERE inv_id = $1"
+    const data = await pool.query(sql, [inv_id])
+    return data.rows[0]
+  } catch (error) {
+    console.error("Check existing inventory error: " + error)
+  }
+  
+}
+
+async function checkIfWishlistExists(account_id, inv_id) {
+  try {
+      const sql = `SELECT * FROM wishlist 
+       WHERE account_id = $1 AND inv_id = $2
+     `
+      const result = await pool.query(sql, [account_id, inv_id])
+      return result.rowCount > 0 // returns true if exists
+  } catch (error) {
+      console.error("Check existing wishilist error: " + error)
+  }
+}
+
+async function getWishlistByAccountId(account_id) {
+  try {
+    const res = await pool.query(
+      `SELECT * FROM wishlist WHERE account_id = $1`,
+      [account_id])
+    return res.rows
+  } catch (error) {
+      console.error("get wishlist error " + error)
+  }
+}
+
+async function deleteFromWishlist(account_id, inv_id) {
+  try {
+    const sql =
+      "DELETE FROM wishlist WHERE account_id = $1 and inv_id = $2 "
+    const data = await pool.query(sql, [account_id, inv_id])
+    return data
+  } catch (error) {
+    console.error("Delete Wishlist error: " + error)
+  }
+}
+
+/* ***************************
+ *  Delete Inventory Data
+ * ************************** */
+async function deleteInventory(
+  inv_id,
+) {
+  try {
+    const sql =
+      "DELETE FROM inventory WHERE inv_id = $1 "
+    const data = await pool.query(sql, [inv_id])
+    return data
+  } catch (error) {
+    console.error("Delete Inventory error: " + error)
+  }
+}
+module.exports = { getClassifications, getInventoryByClassificationId, getInventoryById, addClassification, addInventory, updateInventory, deleteInventory, addInventoryToWishlist, checkExistingInventory, checkIfWishlistExists, getWishlistByAccountId, deleteFromWishlist}
