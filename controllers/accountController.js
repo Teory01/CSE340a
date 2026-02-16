@@ -84,7 +84,7 @@ async function registerAccount(req, res) {
 }
 
 
-module.exports = { buildLogin,buildRegister,registerAccount }
+
 
 
 /* ****************************************
@@ -128,3 +128,5 @@ async function accountLogin(req, res) {
     throw new Error('Access Forbidden')
   }
 }
+
+module.exports = { buildLogin,buildRegister,registerAccount }
