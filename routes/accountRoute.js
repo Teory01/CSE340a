@@ -45,5 +45,51 @@ router.post(
 )
 
 
+/* ************************************
+ *  Deliver Account Management View
+ *  Unit 5, JWT Authorization activity
+ *  ******************************** */
+router.get(
+  "/",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildManagement)
+)
+
+
+/* ****************************************
+ *5 -4 Deliver Account Update View
+ **************************************** */
+router.get(
+  "/update/:id",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildUpdate)
+)
+
+/* ****************************************
+ *5 -5 Update and process password
+ **************************************** */
+router.post(
+  "/update",
+  utilities.checkLogin,
+  regValidate.updateRules(),
+  regValidate.checkEditData,
+  utilities.handleErrors(accountController.processUpdate)
+)
+
+router.post(
+  "/password",
+  utilities.checkLogin,
+  regValidate.passwordRule(),
+  regValidate.checkPassword,
+  utilities.handleErrors(accountController.processPassword)
+)
+
+/* ****************************************
+5 -6 Account Logout
+ **************************************** */
+router.get(
+  "/logout",
+  utilities.handleErrors(accountController.accountLogout)
+)
 
 module.exports = router

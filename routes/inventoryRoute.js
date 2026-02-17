@@ -83,6 +83,60 @@ router.post(
   utilities.handleErrors(invController.addInventory)
 )
 
+/* ****************************************
+ * Get vehicles for AJAX Route
+ * Unit 5, Select inv item activity
+ **************************************** */
+router.get(
+  "/getInventory/:classification_id",
+  utilities.checkAccountType,
+  utilities.handleErrors(invController.getInventoryJSON)
+)
+
+/* ****************************************
+ * Deliver the edit inventory view
+ * Unit 5, Update Step 1 Activity
+ * checkAccountType added Unit 5, Assignment 5, Task 2
+ **************************************** */
+router.get(
+  "/edit/:inv_id",
+  utilities.checkAccountType,
+  utilities.handleErrors(invController.editInvItemView)
+)
+
+/* ****************************************
+ * Process the edit inventory request
+ * Unit 5, Update Step 2 Activity
+ * checkAccountType added Unit 5, Assignment 5, Task 2
+ **************************************** */
+router.post(
+  "/update",
+  utilities.checkAccountType,
+  invChecks.newInventoryRules(),
+  invChecks.checkUpdateData,
+  utilities.handleErrors(invController.updateInventory)
+)
+
+/* ****************************************
+ * Deliver the delete confirmation view
+ * Unit 5, Delete Activity
+ * checkAccountType added Unit 5, Assignment 5, Task 2
+ **************************************** */
+router.get(
+  "/delete/:inv_id",
+  utilities.checkAccountType,
+  utilities.handleErrors(invController.deleteView)
+)
+
+/* ****************************************
+ * Process the delete inventory request
+ * Unit 5, Delete Activity
+  * checkAccountType added Unit 5, Assignment 5, Task 2
+ **************************************** */
+router.post("/delete", 
+utilities.checkAccountType, 
+utilities.handleErrors(invController.deleteItem)
+)
 
 
 module.exports = router;
