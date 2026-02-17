@@ -156,7 +156,7 @@ async function buildAccountManagement(req, res, next) {
 
   if (res.locals.loggedin) {
     const firstname = res.locals.accountData.account_firstname
-    res.render("./account/account-management", {
+    res.render("./account/management", {
       title: "Account Management",
       nav,
       firstname,
