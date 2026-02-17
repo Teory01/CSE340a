@@ -151,7 +151,7 @@ async function logOut(req, res) {
 /************************************************
 *  Deliver account management view
 * *************************************** */
-async function buildAccountManagement(req, res, next) {
+async function buildManagement(req, res, next) {
   let nav = await utilities.getNav()
 
   if (res.locals.loggedin) {
@@ -167,13 +167,14 @@ async function buildAccountManagement(req, res, next) {
 }
 
 /* ****************************************
-*  Build update account view
-* *************************************** */
-async function buildUpdateAccount(req, res) {
+ *  5 task 5
+ **************************************** */
+async function buildUpdate(req, res, next) {
   let nav = await utilities.getNav()
-  const accountData = res.locals.accountData
+  const account_id = parseInt(req.params.id)
+  const accountData = await accountModel.getAccountById(account_id)
   res.render("account/update", {
-    title: "Update Account Information",
+    title: "Account Edit",
     nav,
     errors: null,
     account_id: accountData.account_id,
@@ -184,101 +185,87 @@ async function buildUpdateAccount(req, res) {
 }
 
 /* ****************************************
-*  Process update account 
-* *************************************** */
-async function updateAccount(req, res) {
+ *  5 task 5
+ **************************************** */
+async function processUpdate(req, res, next) {
   let nav = await utilities.getNav()
-  const account_id = parseInt(res.locals.accountData.account_id)
-  const { account_firstname, account_lastname, account_email } = req.body
-  const updateResult = await accountModel.updateAccount(
+  const { account_id, account_firstname, account_lastname, account_email } =
+    req.body
+
+  const editResult = await accountModel.updateAccount(
     account_firstname,
     account_lastname,
     account_email,
     account_id
   )
 
-  const accessToken = jwt.sign(updateResult, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 * 1000 })
-  res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
-
-  if (updateResult) {
-    req.flash("success", "Your account has been updated successfully.")
-    res.redirect("/")
-  } else {
-    req.flash("error", "Sorry, the update failed. Please try again.")
-    res.status(501).render("account/update", {
-      title: "Update Account",
-      nav
+  if (editResult) {
+    req.flash("message success", "The you entered has been updated.")
+    // Rebuild the JWT with new data
+    delete editResult.account_password
+    const accessToken = jwt.sign(editResult, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: 3600 * 1000,
     })
+    res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
+    return res.redirect("/account/")
+  } else {
+    req.flash("message warning", "Sorry, the update failed.")
+    return res.redirect(`/account/update/${account_id}`)
   }
 }
 
 /* ****************************************
-*  Process update password
-* *************************************** */
-async function updatePassword(req, res) {
+ *  5 task 5
+ **************************************** */
+async function processPassword(req, res, next) {
   let nav = await utilities.getNav()
-  const account_id = parseInt(res.locals.accountData.account_id)
-  const { account_password, account_password_confirm } = req.body
-  if (account_password !== account_password_confirm) {
-    req.flash("error", "Passwords do not match. Please try again.")
-    return res.status(400).render("account/update", {
-      title: "Update Account",
-      nav,
-      errors: null
-    })
-  }
+  const { account_id, account_password } = req.body
+
+  // Hash the password before storing
   let hashedPassword
   try {
-    // regular password and cost (salt is generated automatically)
+    // pass regular password and cost (salt is generated automatically)
     hashedPassword = await bcrypt.hashSync(account_password, 10)
   } catch (error) {
-    req.flash("error", 'Sorry, there was an error processing the registration.')
-    res.status(500).render("account/update", {
-      title: "Update Account",
-      nav,
-      errors: null,
-    })
+    req.flash(
+      "message warning",
+      "Sorry, there was an error processing the password change."
+    )
+    return res.redirect(`/account/update/${account_id}`)
   }
-  // Process the update password
-  const updateResult = await accountModel.updatePassword(
+
+  const passwordResult = await accountModel.updatePassword(
     hashedPassword,
     account_id
   )
 
-    
-  if (updateResult) {
-    req.flash(
-      "success",
-      `Congratulations, you've updated your password. Please log in again.`
-    )
-    res.clearCookie("jwt")
-    // Clear the cookie and redirect to login
-    let nav = await utilities.getNav()
-    res.status(201).render("./account/login", {
-      title: "Login",
-      nav,
-      errors: null,
-    })
+  if (passwordResult) {
+    req.flash("message success", "Password updated. Please logout and login to verify.")
+    return res.redirect('/account/')
+
   } else {
-    req.flash("error", "Sorry, the registration failed.")
-    res.status(501).render("account/update", {
-      title: "Update Account",
-      nav,
-      errors: null,
-    })
+    req.flash("message warning", "Sorry, the password update failed.")
+    return res.redirect(`/account/update/${account_id}`)
   }
 }
 
-
-
-module.exports = {
-  buildLogin,
-  buildRegister,
-  registerAccount,
-  accountLogin,
-  buildAccountManagement,
-  logOut,
-  buildUpdateAccount,
-  updateAccount, 
-  updatePassword
+/* ****************************************
+ *  5 task 6
+ * ************************************ */
+async function accountLogout(req, res) {
+  res.clearCookie("jwt")
+  res.locals.loggedin = ''
+  return res.redirect("/")
 }
+
+
+module.exports = { buildLogin, 
+                   buildRegister, 
+                   registerAccount, 
+                   accountLogin, 
+                   buildManagement, 
+                   buildUpdate, 
+                   processUpdate, 
+                   processPassword, 
+                   accountLogout 
+                  }
