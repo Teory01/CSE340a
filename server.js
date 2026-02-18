@@ -18,6 +18,7 @@ const session = require("express-session")
 const pool = require('./database/')
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
+const wishlistRoute = require("./routes/wishlistRoute")
 
 /* ***********************
  * Middleware
@@ -87,6 +88,8 @@ app.get("/", utilities.handleErrors(baseController.buildHome))
 app.use("/inv", inventoryRoute)
 // Account routes - Unit 4, Deliver Login activity
 app.use("/account", accountRoute)
+// Wishlist routes - Unit 6, Build Wishlist activity
+app.use("/wishlist", wishlistRoute)
 
 
 

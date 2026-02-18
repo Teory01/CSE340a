@@ -19,7 +19,11 @@ invCont.buildByClassificationId = async function (req, res, next) {
         return
     }
 
-    const grid = await utilities.buildClassificationGrid(data)
+    const grid = await utilities.buildClassificationGrid(
+  data,
+  res.locals.accountData
+)
+
     const className = data[0].classification_name
     res.render("./inventory/classification", {
         title: className + " vehicles",
@@ -33,19 +37,34 @@ invCont.buildByClassificationId = async function (req, res, next) {
  *  Assignment 3, Task 1
  * ************************** */
 invCont.buildDetail = async function (req, res, next) {
-  const invId = req.params.id
-  let vehicle = await invModel.getInventoryById(invId)
-  const htmlData = await utilities.buildSingleVehicleDisplay(vehicle)
+  const invId = parseInt(req.params.id)
   let nav = await utilities.getNav()
-  const vehicleTitle =
-    vehicle.inv_year + " " + vehicle.inv_make + " " + vehicle.inv_model
-  res.render("./inventory/detail", {
-    title: vehicleTitle,
+
+  const data = await invModel.getInventoryById(invId)
+
+  if (!data) {
+    return res.render("./inventory/detail", {
+      title: "Vehicle Not Found",
+      nav,
+      message: "Sorry, no matching vehicle could be found."
+    })
+  }
+
+  const item = data
+
+  res.render("inventory/detail", {
+    title: item.inv_make + " " + item.inv_model,
     nav,
-    message: null,
-    htmlData,
+    inv_id: item.inv_id,
+    inv_make: item.inv_make,
+    inv_model: item.inv_model,
+    inv_price: item.inv_price,
+    inv_image: item.inv_image,
+    inv_description: item.inv_description,
+    accountData: res.locals.accountData
   })
 }
+
 
 /* ****************************************
  *  Process intentional error

@@ -739,3 +739,89 @@ text-align: center;
 
   /*#endregion*/
 }
+
+/* Wishlist page container */
+.wishlist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each vehicle card */
+.wishlist li {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect */
+.wishlist li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
+
+/* Vehicle image */
+.wishlist li img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Vehicle info */
+.wishlist li h3 {
+  font-size: 1.1rem;
+  margin: 10px;
+  color: #333;
+}
+
+.wishlist li p {
+  font-size: 1rem;
+  margin: 0 10px 10px 10px;
+  color: #555;
+}
+
+/* Form (remove button) */
+.wishlist li form {
+  margin: 10px;
+  text-align: center;
+}
+
+/* Remove button */
+.wishlist li form button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.wishlist li form button:hover {
+  background-color: #c0392b;
+}
+
+/* Empty wishlist notice */
+.wishlist + p.notice {
+  font-size: 1.2rem;
+  color: #555;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Optional: add spacing for page title */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #222;
+}

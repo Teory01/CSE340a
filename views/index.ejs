@@ -62,4 +62,38 @@
     </div>
   </section>
 
+
+
 </div>
+
+<%# Unit 6, Build Wishlist activity%>
+
+<section id="wishlist">
+  <h1>My Wishlist</h1>
+
+  <% if (typeof wishlist !== "undefined" && wishlist.length > 0) { %>
+    <ul class="wishlist">
+      <% wishlist.forEach(item => { %>
+        <li>
+          <img src="<%= item.inv_thumbnail %>" 
+               alt="<%= item.inv_make %> <%= item.inv_model %>">
+
+          <h3><%= item.inv_make %> <%= item.inv_model %></h3>
+
+          <p>$<%= Number(item.inv_price).toLocaleString() %></p>
+
+          <form action="/wishlist/remove" method="POST">
+            <input type="hidden" 
+                   name="wishlist_id" 
+                   value="<%= item.wishlist_id %>">
+            <button type="submit">Remove</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>Your wishlist is empty.</p>
+  <% } %>
+
+  
+</section>

@@ -1,16 +1,40 @@
 <%# Unit 3, Assignment 3, Task 1 %>
+
 <% if (title) { %>
-<h1><%= title %></h1>
-<% } else {
-  res.redirect('/')
-} %>
-
-
-
-<% if(Object.entries(htmlData).length > 0){ %>
-
-<%- htmlData %>
+  <h1><%= title %></h1>
 <% } else { %>
-<p class="notice">Sorry, no matching vehicle could be found.</p>
+  <% res.redirect("/") %>
 <% } %>
 
+<%# Unit 6, Added wishlist button %>
+<% if (inv_id) { %>
+
+  <div class="vehicle-detail">
+
+    <h2><%= inv_make %> <%= inv_model %></h2>
+
+    <img src="<%= inv_image %>" 
+         alt="<%= inv_make %> <%= inv_model %>">
+
+    <p class="price">
+      Price: $<%= Number(inv_price).toLocaleString() %>
+    </p>
+
+    <p class="description">
+      <%= inv_description %>
+    </p>
+
+    <% if (accountData) { %>
+      <form action="/wishlist/add" method="POST">
+        <input type="hidden" name="inv_id" value="<%= inv_id %>">
+        <button type="submit">Add to Wishlist</button>
+      </form>
+    <% } %>
+
+  </div>
+
+<% } else { %>
+
+  <p class="notice">Sorry, no matching vehicle could be found.</p>
+
+<% } %>

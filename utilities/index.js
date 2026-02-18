@@ -1,7 +1,10 @@
+const utilities = {}
+
 const invModel = require("../models/inventory-model")
 const Util = {}
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
+
 
 /* ************************
  * Constructs the nav HTML unordered list
@@ -81,29 +84,44 @@ Util.buildClassificationList = async function (classification_id = null) {
 /* **************************************
 * Build the inventory view HTML
 * ************************************ */
-Util.buildSingleVehicleDisplay = async function (data) {
-    let grid = '<section id="vehicle-display">'
-    grid += `<div>`
-    grid += '<section class="imagePrice">'
-    grid += `<img src="${data.inv_image}" alt="Image of ${data.inv_make} ${data.inv_model}">`
-    grid += '</section>'
-    grid += '<section class="vehicleDetail">'
-    grid += "<h3> " + data.inv_make + " " + data.inv_model + " Details</h3>"
-    grid += '<ul id="vehicle-details">'
-    grid +=
-        "<li><h4>Price: $" +
-        new Intl.NumberFormat("en-US").format(data.inv_price) +
-        "</h4></li>"
-    grid += "<li><h4>Description:</h4> " + data.inv_description + "</li>"
-    grid += "<li><h4>Color:</h4> " + data.inv_color + "</li>"
-    grid +=
-        "<li><h4>Miles:</h4> " +
-        new Intl.NumberFormat("en-US").format(data.inv_miles) +
-        "</li>"
-    grid += "</ul>"
-    grid += "</section>"
-    grid += `</div>`
-    return grid
+utilities.buildClassificationGrid = async function(data, accountData) {
+  let grid
+  if (data.length > 0) {
+    grid = '<ul id="inv-display">'
+    data.forEach(vehicle => {
+      grid += '<li>'
+      grid += '<a href="/inv/detail/' + vehicle.inv_id + '">'
+      grid += '<img src="' + vehicle.inv_thumbnail +
+              '" alt="Image of ' + vehicle.inv_make + ' ' + vehicle.inv_model + '">'
+      grid += '</a>'
+      grid += '<div class="namePrice">'
+      grid += '<hr />'
+      grid += '<h2>'
+      grid += '<a href="/inv/detail/' + vehicle.inv_id + '">' +
+              vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
+      grid += '</h2>'
+      grid += '<span>$' +
+              new Intl.NumberFormat('en-US').format(vehicle.inv_price) +
+              '</span>'
+      grid += '</div>'
+
+      /* 🔥 Add Wishlist Button Here */
+      if (accountData) {
+        grid += `
+          <form action="/wishlist/add" method="POST">
+            <input type="hidden" name="inv_id" value="${vehicle.inv_id}">
+            <button type="submit">Add to Wishlist</button>
+          </form>
+        `
+      }
+
+      grid += '</li>'
+    })
+    grid += '</ul>'
+  } else {
+    grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+  }
+  return grid
 }
 
 /* ****************************************
@@ -135,6 +153,8 @@ Util.checkJWTToken = (req, res, next) => {
   next()
  }
 }
+
+
 
 /* ****************************************
  *  Check Login

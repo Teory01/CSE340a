@@ -6,6 +6,11 @@ CREATE TABLE IF NOT EXISTS public.wishlist (
   date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE public.wishlist
+ADD CONSTRAINT unique_account_inventory
+UNIQUE (account_id, inv_id);
+
+
 -- One-to-many relationship: account → wishlist
 ALTER TABLE IF EXISTS public.wishlist
   ADD CONSTRAINT fk_account
