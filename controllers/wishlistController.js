@@ -3,51 +3,55 @@ const utilities = require("../utilities/")
 const wishlistController = {}
 
 /* *****************************
- * Add to wishlist
+ * Add to wishlist (AJAX friendly)
  * *************************** */
-async function addToWishlist(req, res) {
+wishlistController.addToWishlist = async function(req, res) {
   const { inv_id } = req.body
   const account_id = res.locals.accountData.account_id
 
   try {
-    await wishlistModel.addToWishlist(account_id, inv_id)
-    req.flash("notice", "Item added to wishlist.")
-    res.redirect("/wishlist")
+    const result = await wishlistModel.addToWishlist(account_id, inv_id)
+
+    // If already exists
+    if (!result) {
+      return res.status(200).json({ status: "exists" })
+    }
+
+    // Successfully added
+    return res.status(200).json({ status: "added" })
+
   } catch (error) {
-    req.flash("notice", "Item already in wishlist or error occurred.")
-    res.redirect("back")
+    console.error("Add to wishlist error:", error)
+    return res.status(500).json({ status: "error" })
   }
 }
 
 /* *****************************
  * View Wishlist
  * *************************** */
-async function buildWishlist(req, res) {
+wishlistController.buildWishlist = async function(req, res) {
   const account_id = res.locals.accountData.account_id
   const data = await wishlistModel.getWishlistByAccount(account_id)
+  const nav = await utilities.getNav()
 
-  res.render("index", {
-  title: "Home",
-  nav,
-  wishlist: data.rows
-})
-
+  res.render("wishlist/index", {
+    title: "My Wishlist",
+    nav,
+    wishlist: data.rows
+  })
 }
 
 /* *****************************
- * Remove item
+ * Remove item (AJAX friendly)
  * *************************** */
-async function removeItem(req, res) {
+wishlistController.removeItem = async function(req, res) {
   const { wishlist_id } = req.body
   const account_id = res.locals.accountData.account_id
 
   await wishlistModel.removeFromWishlist(wishlist_id, account_id)
-  req.flash("notice", "Item removed from wishlist.")
-  res.redirect("/wishlist")
+
+  return res.status(200).json({ status: "removed" })
 }
 
-module.exports = {
-  addToWishlist,
-  buildWishlist,
-  removeItem,
-}
+
+module.exports = wishlistController

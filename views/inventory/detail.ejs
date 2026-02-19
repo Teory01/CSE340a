@@ -25,9 +25,11 @@
     </p>
 
     <% if (accountData) { %>
-      <form action="/wishlist/add" method="POST">
+      <form class="wishlist-form">
         <input type="hidden" name="inv_id" value="<%= inv_id %>">
-        <button type="submit">Add to Wishlist</button>
+        <button type="submit" class="add-wishlist">
+          Add to Wishlist
+        </button>
       </form>
     <% } %>
 

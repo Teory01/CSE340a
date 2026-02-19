@@ -825,3 +825,40 @@ h1 {
   margin-bottom: 30px;
   color: #222;
 }
+
+
+button.add-wishlist {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button.add-wishlist:hover {
+  background-color: #2980b9;
+}
+
+button.already-wishlist {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: not-allowed;
+}
+
+button.remove-wishlist {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.remove-wishlist:hover {
+  background-color: #c0392b;
+}
